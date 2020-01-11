@@ -1,23 +1,23 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-const Layout = () => import('../views/Layout')
-const Home = () => import('../views/home/index.vue')
-const Qusetion = () => import('../views/question/index.vue')
-const Video = () => import('../views/video/index.vue')
-const User = () => import('../views/user/index.vue')
-const UserProfile = () => import('../views/user/Profile.vue')
-const UserChat = () => import('../views/user/Chat.vue')
-const Login = () => import('../views/user/Login.vue')
-const Search = () => import('../views/search/index.vue')
-const SearchResult = () => import('../views/search/Result.vue')
-const Article = () => import('../views/home/Article.vue')
+const Layout = () => import('../views/Layout')// 布局组件
+const Home = () => import('../views/home/index.vue') // 主页组件
+const Qusetion = () => import('../views/question/index.vue') // 问答组件
+const Video = () => import('../views/video/index.vue')// 视频
+const User = () => import('../views/user/index.vue') // 用户
+const UserProfile = () => import('../views/user/Profile.vue') // 资料编辑
+const UserChat = () => import('../views/user/Chat.vue') // 小智
+const Login = () => import('../views/user/Login.vue') // 登录
+const Search = () => import('../views/search/index.vue') // 搜索
+const SearchResult = () => import('../views/search/Result.vue') // 搜索结果
+const Article = () => import('../views/home/Article.vue') // 文章详情
 Vue.use(VueRouter)
 
 const routes = [{
   path: '/',
   component: Layout,
   children: [
-    { path: '/', name: 'home', component: Home },
+    { path: '/', name: 'home', component: Home }, // 二级路由
     { path: '/question', name: 'question', component: Qusetion },
     { path: '/video', name: 'video', component: Video },
     { path: '/user', name: 'user', component: User }
