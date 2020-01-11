@@ -1,28 +1,38 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-
+const Layout = () => import('../views/Layout')
+const Home = () => import('../views/home/index.vue')
+const Qusetion = () => import('../views/question/index.vue')
+const Video = () => import('../views/video/index.vue')
+const User = () => import('../views/user/index.vue')
+const UserProfile = () => import('../views/user/Profile.vue')
+const UserChat = () => import('../views/user/Chat.vue')
+const Login = () => import('../views/user/Login.vue')
+const Search = () => import('../views/search/index.vue')
+const SearchResult = () => import('../views/search/Result.vue')
+const Article = () => import('../views/home/Article.vue')
 Vue.use(VueRouter)
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+const routes = [{
+  path: '/',
+  component: Layout,
+  children: [
+    { path: '/', name: 'home', component: Home },
+    { path: '/question', name: 'question', component: Qusetion },
+    { path: '/video', name: 'video', component: Video },
+    { path: '/user', name: 'user', component: User }
+  ]
+},
+{ path: '/user/profile', name: 'user-profile', component: UserProfile },
+{ path: '/user/chat', name: 'user-chat', component: UserChat },
+{ path: '/login', name: 'login', component: Login },
+{ path: '/search', name: 'search', component: Search },
+{ path: '/search/result', name: 'search-result', component: SearchResult },
+{ path: '/article', name: 'article', component: Article }
+
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
   routes
 })
 
