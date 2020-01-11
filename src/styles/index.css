@@ -33,3 +33,6 @@ ul {
 .van-nav-bar__text:active {
   background: transparent;
 }
+.van-skeleton {
+  margin-top: 10px;
+}

@@ -12,8 +12,6 @@ export default {
 }
 </script>
 
-<style scoped lang='less'>
-.van-skeleton{
-  margin-top: 10px;
-}
+<style>
+
 </style>
