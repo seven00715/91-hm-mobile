@@ -11,7 +11,7 @@ export function setUser (user) {
 
 // 读取用户信息
 export function getUser () {
-  JSON.parse(localStorage.getItem(USER_TOKEN) || '{}') // 短路表达式
+  return JSON.parse(localStorage.getItem(USER_TOKEN) || '{}') // 短路表达式
 }
 
 // 删除用户信息

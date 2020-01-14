@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
+import store from '../store'
 const Layout = () => import('../views/Layout')// 布局组件
 const Home = () => import('../views/home/index.vue') // 主页组件
 const Qusetion = () => import('../views/question/index.vue') // 问答组件
@@ -34,6 +36,21 @@ const routes = [{
 
 const router = new VueRouter({
   routes
+})
+router.beforeEach((to, from, next) => {
+  // const { user } = store.state
+  const toPath = {
+    path: '/login',
+    query: {
+      redirectUrl: to.path // 携带刚才要去的地址到登录页=>登录成功之后 ,有可权限再到刚才没有权限去的地址
+    }
+  }
+  // console.log(store.state.user.token)
+
+  if (to.path.startsWith('/user') && !store.state.user.token) {
+    return next(toPath)
+  }
+  next() // 直接放行
 })
 
 export default router

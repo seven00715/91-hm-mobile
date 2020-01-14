@@ -3,8 +3,10 @@
 </template>
 
 <script>
+
 export default {
   name: 'user-index'
+
 }
 </script>
 
