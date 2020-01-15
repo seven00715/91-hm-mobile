@@ -8,30 +8,47 @@
     </van-cell-group>
     <van-cell-group v-else>
       <van-cell icon="arrow-left" @click="isReport=false">返回</van-cell>
-      <van-cell>侵权</van-cell>
-      <van-cell>色情</van-cell>
+      <!-- 点击举报按钮 触发父组件 去调用举报文章的接口 -->
+      <van-cell v-for="item in reports" :key="item.value" @click="$emit('report',item.value)">{{ item.label }}</van-cell>
+      <!-- <van-cell>色情</van-cell>
       <van-cell>暴力</van-cell>
       <van-cell>低俗</van-cell>
       <van-cell>不适</van-cell>
       <van-cell>错误</van-cell>
-      <van-cell>其他</van-cell>
+      <van-cell>其他</van-cell> -->
     </van-cell-group>
   <!-- </van-popup> -->
 </template>
 
 <script>
+import { reports } from '@/api/constants'
+import eventBus from '@/utils/eventBus'
+
 export default {
   name: 'more-action',
   props: {
     value: {
       type: Boolean,
       default: false
+    },
+    articleId: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
-      isReport: false
+      isReport: false,
+      reports
     }
+  },
+  created () {
+    eventBus.$on('delArticle', () => {
+      this.isReport = false
+    })
+  },
+  methods: {
+
   }
 }
 </script>
