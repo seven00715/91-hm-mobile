@@ -119,12 +119,14 @@ instance.interceptors.response.use(function (response) {
         // 表示补救措施无效(refresh_token过期或无效),应该跳转到登录页面  并且情空 无效的user
         store.commit('clearUser')
         router.push(toPath)
+        return Promise.reject(error)
       }
     } else {
       // 连refresh_token 都没有
       //  当访问 页面时 => 去登录 => 登录成功之后 => 回到之前的页面
       // 要记住当前的地址 => 在登录页面 => 读取地址  => 根据读取的地址跳转
       router.push(toPath)
+      return Promise.reject(error)
     }
   }
   return Promise.reject(error)

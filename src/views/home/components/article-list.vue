@@ -13,7 +13,7 @@
                 :finished="finished"
                 finished-text="没有更多了"
               >
-                <van-cell v-for="item in articles" :key="item.art_id.toString()">
+                <van-cell v-for="item in articles" :key="item.art_id.toString()" @click="$router.push(`/article?id=${item.art_id.toString()}`)">
                    <div class="article_item">
                     <h3 class="van-ellipsis">{{ item.title }}</h3>
                     <div class="img_box" v-if="item.cover.type === 3">
@@ -30,7 +30,7 @@
                       <span>{{ item.comm_count }}</span>
                       <span>{{ item.pubdate|relTime }}</span>
                       <!-- 点击叉号  告诉父组件 我要反馈 -->
-                      <span class="close" v-if="user.token" @click="$emit('showAction',item.art_id.toString())">
+                      <span class="close" v-if="user.token" @click.stop="$emit('showAction',item.art_id.toString())">
                         <van-icon name='cross'></van-icon>
                         </span>
                     </div>

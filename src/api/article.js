@@ -37,3 +37,78 @@ export function reportsArticle (data) {
     method: 'post'
   })
 }
+
+/**
+ * 获取联想建议词条
+ */
+export function suggestion (params) {
+  return request({
+    url: '/suggestion',
+    params
+  })
+}
+/**
+ * 获取搜索结果
+ */
+export function search (params) {
+  return request({
+    url: '/search',
+    params
+  })
+}
+
+/**
+ * 获取文章详情
+ * /articles/:article_id
+ */
+
+export function getArticle (params) {
+  return request({
+    url: `/articles/${params}`
+  })
+}
+
+/**
+ * 不喜欢
+ */
+
+export function disLikes (data) {
+  return request({
+    url: '/article/dislikes',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 取消不喜欢
+ */
+
+export function undisLikes (data) {
+  return request({
+    url: `/article/dislikes/${data}`,
+    method: 'post'
+  })
+}
+
+/**
+ * 点赞
+ */
+
+export function likings (data) {
+  return request({
+    url: '/article/likings',
+    method: 'post',
+    data
+  })
+}
+/**
+ * 取消点赞
+ */
+
+export function unlikings (data) {
+  return request({
+    url: `/article/likings/${data}`,
+    method: 'delete'
+  })
+}

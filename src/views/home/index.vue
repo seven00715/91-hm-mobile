@@ -37,7 +37,6 @@
     </van-popup>
   </div>
 </template>
-
 <script>
 import { getMychannels, delChannel, addChannel } from '@/api/channel'
 // import { getArticles } from '@/api/article'

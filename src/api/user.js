@@ -21,3 +21,35 @@ export function login (data) {
 
   }) //  得到一个promise对象  返回
 }
+
+/**
+ * 添加关注
+ */
+export function followings (data) {
+  return request({
+    url: '/user/followings',
+    method: 'post',
+    data
+  })
+}
+/**
+ * 取消关注
+ */
+
+export function unfollowings (data) {
+  return request({
+    url: `/user/followings/${data}`,
+    method: 'delete'
+
+  })
+}
+
+/**
+ * 获取用户自己的信息
+ */
+
+export function getUserInfo () {
+  return request({
+    url: '/user'
+  })
+}
