@@ -1,8 +1,8 @@
 <template>
   <div class="comment">
     <!-- 评论列表 -->
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
-      <div class="item van-hairline--bottom van-hairline--top" v-for="index in 5" :key="index">
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="loadComments()" >
+      <div class="item van-hairline--bottom van-hairline--top" v-for="comment in comments" :key="comment.com_id">
         <van-image
           round
           width="1rem"
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { getCommentOrReplys } from '@/api/article'
 export default {
   name: 'comment',
   data () {
@@ -48,9 +49,36 @@ export default {
       // 输入的内容
       value: '',
       // 控制提交中状态数据
-      submiting: false
+      submiting: false,
+      // 评论列表
+      comments: []
+
+    }
+  },
+  activated () {
+    // 情空上一篇评论
+    this.comments = []
+    // 开启加载中效果
+    this.loading = true
+    // 重置 是否完全加载完毕 状态
+    this.finished = false
+    // 重置 偏移量
+    this.offset = null
+    this.loadComments()
+  },
+  methods: {
+    async loadComments () {
+      await this.$sleep()
+
+      const data = await getCommentOrReplys({
+        type: 'a',
+        source: this.$route.query.id,
+        offset: this.offset
+      })
+      this.comments = data.results
     }
   }
+
 }
 </script>
 

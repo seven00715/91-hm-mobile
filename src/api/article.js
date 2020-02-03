@@ -112,3 +112,14 @@ export function unlikings (data) {
     method: 'delete'
   })
 }
+
+/**
+ * 获取评论或者回复
+ */
+
+export function getCommentOrReplys ({ type, source, offset, limit = 10 }) {
+  return request({
+    url: '/comments',
+    params: { type, source, offset, limit }
+  })
+}
