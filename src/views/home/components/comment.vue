@@ -5,7 +5,7 @@
       <div
         class="item van-hairline--bottom van-hairline--top"
         v-for="comment in comments"
-        :key="comment.toString()"
+        :key="comment.com_id.toString()"
       >
         <van-image round width="1rem" height="1rem" fit="fill" :src="comment.aut_photo" />
         <div class="info">
@@ -19,7 +19,11 @@
           <p>{{ comment.content }}</p>
           <p>
             <span class="time">{{ comment.pubdate | relTime }}</span>&nbsp;
-            <van-tag plain @click="showReply=true">{{ comment.reply_count }} 回复</van-tag>
+            <van-tag
+              plain
+              @click="openReply(comment.com_id.toString())"
+            >{{ comment.reply_count }} 回复</van-tag>
+            <!-- 点击的时候,回去当前评论的ID,才知道获取那条评论的id -->
           </p>
         </div>
       </div>
@@ -31,6 +35,37 @@
         <span class="submit" v-else slot="button">提交</span>
       </van-field>
     </div>
+    <!-- 回复列表组件 -->
+    <!-- 回复 -->
+    <van-action-sheet v-model="showReply" class="reply_dailog" title="回复评论" :round="false">
+      <!-- immediate-check="false" 是否主动加载数据   第一次不会主动调用load方法`-->
+      <van-list
+        v-model="reply.loading"
+        :finished="reply.finished"
+        finished-text="没有更多了"
+        :immediate-check="false"
+        @load="getReply()"
+      >
+        <div class="item van-hairline--bottom van-hairline--top" v-for="reply in reply.list" :key="reply.com_id.toString()">
+          <van-image
+            round
+            width="1rem"
+            height="1rem"
+            fit="fill"
+            :src="reply.aut_photo"
+          />
+          <div class="info">
+            <p>
+              <span class="name">{{ reply.aut_name }}</span>
+            </p>
+            <p>{{ reply.content }}</p>
+            <p>
+              <span class="time">{{ reply.pubdate | relTime}}</span>
+            </p>
+          </div>
+        </div>
+      </van-list>
+    </van-action-sheet>
   </div>
 </template>
 
@@ -51,7 +86,18 @@ export default {
       // 评论列表的数据
       comments: [],
       // 表示分页依据如果为空,从第一页开始
-      offset: null
+      offset: null,
+      showReply: false, // 控制回复列表组件显示与隐藏
+      reply: {
+        loading: false,
+        finished: false,
+        // 回复的偏移量获取评论回复的分页依据
+        offset: null,
+        // 回复列表   => 当前弹出的关于某条评论回复列表的数据
+        list: [],
+        // 用来存放当前点击的评论的id
+        commentId: null
+      }
     }
   },
   // activated () {
@@ -84,13 +130,47 @@ export default {
         // 分页 => 时间戳
         // 分页 =>偏移量
       })
-      console.log(data)
+      // console.log(data)
 
       this.comments.push(...data.results)
       //  关闭正在上拉加载的状态
       this.loading = false // 关闭正在上拉加载的状态
       // 如果当前页的id等于这个评论的最后一个id ,那么数据请求完毕 => 关闭上拉加载状态finished = false
       this.finished = data.last_id === data.end_id
+      this.offset = data.last_id
+    },
+    async openReply (commentId) {
+      // 打开回复列表
+      this.showReply = true
+      // 进行一系列操作
+      // 将评论id传到数据里
+      this.reply.commentId = commentId
+
+      // 需要重置数据
+      this.reply.list = [] // 情况原有的数据
+      this.reply.offset = null // 重置回复的偏移量 因为每个评论的回复都是从第一页开始
+      this.reply.finished = false // 设置成原始状态
+      this.reply.loading = true // 打开加载状态 因为这个时候没有了自动的检查
+      // 开始加载第一页的数据
+      this.getReply() // 第一次等前面数据清空之后,再手动调用数据
+    },
+    // 获取评论的评论(回复/二级评论)
+    async getReply () {
+      await this.$sleep()
+      // 加载逻辑
+      const data = await getCommentOrReplys({
+        type: 'c',
+        source: this.reply.commentId,
+        offset: this.reply.offset
+      })
+      // console.log(data)
+
+      this.reply.list.push(...data.results)
+      this.reply.loading = false
+      this.reply.finished = data.last_id === data.end_id
+      if (!this.reply.finished) {
+        this.reply.offset = data.last_id
+      }
     }
   }
 }
@@ -130,7 +210,7 @@ export default {
     background: transparent;
   }
 }
- /deep/  .reply-container {
+.reply-container {
   position: fixed;
   left: 0;
   bottom: 0;
@@ -142,6 +222,25 @@ export default {
   .submit {
     font-size: 12px;
     color: #3296fa;
+  }
+}
+.reply_dailog {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  .van-action-sheet__header {
+    background: #3296fa;
+    color: #fff;
+    .van-icon-close {
+      color: #fff;
+    }
+  }
+  .van-action-sheet__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 10px 44px;
   }
 }
 </style>
