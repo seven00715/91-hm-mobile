@@ -9,17 +9,18 @@
         </van-list>
         </van-pull-refresh>-->
         <!--  如果要监听子组件的事件,就应该在子组件的标签上写监听 -->
+        <!-- 生成10个实例 10个实例之间都是独立的关系 -->
         <article-list :channel_id='channel.id' @showAction="openMoreAction"></article-list>
       </van-tab>
     </van-tabs>
     <span class="bar_btn" slot="nav-rigth" @click="showEditChannel=true">
       <van-icon name="wap-nav" />
     </span>
+    <!--  频道管理组件 -->
     <channel-edit
     v-model="showEditChannel"
     :channels="channels"
     :activeIndex="activeIndex"
-
     @selectChannel = 'selectChannel'
     @delChannel = 'delChannel'
     @addChannel = 'addChannel'
@@ -27,6 +28,7 @@
     <!--   @update='activeIndex=$event' -->
     </channel-edit>
     <!-- 放置弹层 -->
+    <!-- 举报 -->
     <van-popup v-model="showMoreActions">
       <!--  report事件中的第一个参数$event 实际上就是moreAction组件传出的参数 -->
       <!-- 在原生事件中，$event是事件对象 在自定义事件中，$event是传递过来的数据 -->
@@ -87,6 +89,8 @@ export default {
           this.activeIndex--
         }
         if (index > -1) {
+          // 激活频道在删除频道前面
+          // 直接把频道数组删除一位
           this.channels.splice(index, 1)
           // 激活组件的切换
         }

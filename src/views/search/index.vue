@@ -91,6 +91,7 @@ export default {
     // 跳转到搜索结果之前应该吧当前的搜索关键字 写入到历史记录
       if (!this.q) return
       let obj = new Set(this.historyList) // 生成一个set 对象
+      // 搜索关键词加到历史记录
       obj.add(this.q)
       this.historyList = Array.from(obj) // 将set转回数组
       localStorage.setItem(key, JSON.stringify(this.historyList))

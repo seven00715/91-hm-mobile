@@ -53,6 +53,7 @@ export default {
     channels: {
       type: Array,
       // 用一个函数来声明数组类型,所以用箭头函数
+      // eslint 要求default 必须是一个函数
       default: () => []
     },
     activeIndex: {

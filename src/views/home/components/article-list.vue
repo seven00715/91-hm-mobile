@@ -1,45 +1,44 @@
 <template>
-
-     <div class="scroll-wrapper">
-          <van-cell-group>
-            <van-pull-refresh
-              v-model="downLoading"
-              @refresh="onRefresh"
-              :success-text="refreshSuccessText"
-            >
-              <van-list
-                v-model="upLoading"
-                @load="onLoad"
-                :finished="finished"
-                finished-text="没有更多了"
-              >
-                <van-cell v-for="item in articles" :key="item.art_id.toString()" @click="$router.push(`/article?id=${item.art_id.toString()}`)">
-                   <div class="article_item">
-                    <h3 class="van-ellipsis">{{ item.title }}</h3>
-                    <div class="img_box" v-if="item.cover.type === 3">
-                      <van-image lazy-load class="w33" fit='cover' :src="item.cover.images[0]"></van-image>
-                      <van-image lazy-load class="w33" fit='cover' :src='item.cover.images[1]'></van-image>
-                      <van-image lazy-load class="w33" fit='cover' :src='item.cover.images[2]'></van-image>
-                    </div>
-                     <div class="img_box" v-if="item.cover.type === 1">
-                      <van-image class="w33" lazy-load fit='cover' :src="item.cover.images[0]">
-                      </van-image>
-                    </div>
-                    <div class="info_box">
-                      <span>{{ item.aut_name }}</span>
-                      <span>{{ item.comm_count }}</span>
-                      <span>{{ item.pubdate|relTime }}</span>
-                      <!-- 点击叉号  告诉父组件 我要反馈 -->
-                      <span class="close" v-if="user.token" @click.stop="$emit('showAction',item.art_id.toString())">
-                        <van-icon name='cross'></van-icon>
-                        </span>
-                    </div>
-                  </div>
-                </van-cell>
-              </van-list>
-            </van-pull-refresh>
-          </van-cell-group>
-        </div>
+  <div class="scroll-wrapper">
+     <van-cell-group>
+       <van-pull-refresh
+         v-model="downLoading"
+         @refresh="onRefresh"
+         :success-text="refreshSuccessText"
+       >
+         <van-list
+           v-model="upLoading"
+           @load="onLoad"
+           :finished="finished"
+           finished-text="没有更多了"
+         >
+           <van-cell v-for="item in articles" :key="item.art_id.toString()" @click="$router.push(`/article?id=${item.art_id.toString()}`)">
+              <div class="article_item">
+               <h3 class="van-ellipsis">{{ item.title }}</h3>
+               <div class="img_box" v-if="item.cover.type === 3">
+                 <van-image lazy-load class="w33" fit='cover' :src="item.cover.images[0]"></van-image>
+                 <van-image lazy-load class="w33" fit='cover' :src='item.cover.images[1]'></van-image>
+                 <van-image lazy-load class="w33" fit='cover' :src='item.cover.images[2]'></van-image>
+               </div>
+                <div class="img_box" v-if="item.cover.type === 1">
+                 <van-image class="w33" lazy-load fit='cover' :src="item.cover.images[0]">
+                 </van-image>
+               </div>
+               <div class="info_box">
+                 <span>{{ item.aut_name }}</span>
+                 <span>{{ item.comm_count }}</span>
+                 <span>{{ item.pubdate|relTime }}</span>
+                 <!-- 点击叉号  告诉父组件 我要反馈 -->
+                 <span class="close" v-if="user.token" @click.stop="$emit('showAction',item.art_id.toString())">
+                   <van-icon name='cross'></van-icon>
+                   </span>
+               </div>
+             </div>
+           </van-cell>
+         </van-list>
+       </van-pull-refresh>
+     </van-cell-group>
+   </div>
 </template>
 
 <script>
@@ -49,11 +48,11 @@ import { mapState } from 'vuex'
 import eventBus from '../../../utils/eventBus'
 export default {
   name: 'article-list', // devtools 查看组件的时候,就是这个name
-  props: {
+  props: { // 可以跟对象
     channel_id: {
-      type: Number,
-      required: true,
-      default: null
+      type: Number, // 类型
+      required: true, // 是否必传
+      default: null // 是否有默认值
     }
   },
   // 映射vuex中的对象到组件中
@@ -106,8 +105,9 @@ export default {
       //     this.finished = true
       //   }
       // }, 1500)
-      // -------------------------------
+      // -------- 真实数据 用时间戳获取-----------------------
       await this.$sleep(1000)
+      // 没有历史时间 => 传入当前时间戳
       let data = await getArticles({ timestamp: this.timestamp || Date.now(), channel_id: this.channel_id })
       console.log(data)
 
@@ -115,6 +115,7 @@ export default {
       this.upLoading = false // 结束下拉
       // 判断历史时间戳 如果有历史记录。表示可以加载 （下一次用历史时间戳加载）。没有历史就不往下看了下拉刷新关闭
       if (!data.pre_timestamp) {
+        // 没有历史时间戳
         this.finished = true
       } else {
         this.timestamp = data.pre_timestamp

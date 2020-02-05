@@ -1,27 +1,25 @@
 <template>
   <div class="comment">
     <!-- 评论列表 -->
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="loadComments()" >
-      <div class="item van-hairline--bottom van-hairline--top" v-for="comment in comments" :key="comment.com_id">
-        <van-image
-          round
-          width="1rem"
-          height="1rem"
-          fit="fill"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
-        />
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad()">
+      <div
+        class="item van-hairline--bottom van-hairline--top"
+        v-for="comment in comments"
+        :key="comment.toString()"
+      >
+        <van-image round width="1rem" height="1rem" fit="fill" :src="comment.aut_photo" />
         <div class="info">
           <p>
-            <span class="name">一阵清风</span>
+            <span class="name">{{comment.aut_name }}</span>
             <span style="float:right">
               <span class="van-icon van-icon-good-job-o zan"></span>
-              <span class="count">10</span>
+              <span class="count">{{ comment.like_count }}</span>
             </span>
           </p>
-          <p>评论的内容，。。。。</p>
+          <p>{{ comment.content }}</p>
           <p>
-            <span class="time">两天内</span>&nbsp;
-            <van-tag plain @click="showReply=true">4 回复</van-tag>
+            <span class="time">{{ comment.pubdate | relTime }}</span>&nbsp;
+            <van-tag plain @click="showReply=true">{{ comment.reply_count }} 回复</van-tag>
           </p>
         </div>
       </div>
@@ -37,7 +35,7 @@
 </template>
 
 <script>
-import { getCommentOrReplys } from '@/api/article'
+import { getCommentOrReplys } from '@/api/article' // 引入封装的获取评论方法
 export default {
   name: 'comment',
   data () {
@@ -50,35 +48,51 @@ export default {
       value: '',
       // 控制提交中状态数据
       submiting: false,
-      // 评论列表
-      comments: []
-
+      // 评论列表的数据
+      comments: [],
+      // 表示分页依据如果为空,从第一页开始
+      offset: null
     }
   },
-  activated () {
-    // 情空上一篇评论
-    this.comments = []
-    // 开启加载中效果
-    this.loading = true
-    // 重置 是否完全加载完毕 状态
-    this.finished = false
-    // 重置 偏移量
-    this.offset = null
-    this.loadComments()
-  },
+  // activated () {
+  //   // // 情空上一篇评论
+  //   // this.comments = []
+  //   // // 开启加载中效果
+  //   // this.loading = true
+  //   // // 重置 是否完全加载完毕 状态
+  //   // this.finished = false
+  //   // // 重置 偏移量
+  //   // this.offset = null
+  //   this.onLoad()
+  // },
   methods: {
-    async loadComments () {
+    // 获取评论数据
+    async onLoad () {
       await this.$sleep()
-
+      // 获取一级评论数据
       const data = await getCommentOrReplys({
         type: 'a',
         source: this.$route.query.id,
         offset: this.offset
+        // offset 分页依据 不可能一口气把所有的评论都加载出来,offset 如果不传或者为null的话,表示查询第一页的数据
+        // 第二页数据 需要传入 第一页返回的最后一个id 第三页需要传入第二页的最后一个id
+        // 什么时候结束
+        // 当前页最后一个id(返回数据中的last_id/下一页请求参数的offset) 和整个评论的最后一个id相等(返回数据中的end_id),表示没有数据了
+        // last_id 表示当前页的最后一个id
+        // end_id 表示整个评论的最后一个id
+        // 如果 last_id === end_id 表示所有的数据请求完毕
+        // 分页 => 时间戳
+        // 分页 =>偏移量
       })
-      this.comments = data.results
+      console.log(data)
+
+      this.comments.push(...data.results)
+      //  关闭正在上拉加载的状态
+      this.loading = false // 关闭正在上拉加载的状态
+      // 如果当前页的id等于这个评论的最后一个id ,那么数据请求完毕 => 关闭上拉加载状态finished = false
+      this.finished = data.last_id === data.end_id
     }
   }
-
 }
 </script>
 
@@ -116,14 +130,15 @@ export default {
     background: transparent;
   }
 }
-.reply-container {
+ /deep/  .reply-container {
   position: fixed;
   left: 0;
   bottom: 0;
   height: 44px;
   width: 100%;
-  background: #f5f5f5;
+  background: #696;
   z-index: 9999;
+
   .submit {
     font-size: 12px;
     color: #3296fa;

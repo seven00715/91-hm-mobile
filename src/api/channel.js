@@ -40,13 +40,13 @@ export const getMychannels = () => {
     let str = localStorage.getItem(key)
 
     if (str) {
-      // 如果有本地数据
+      // 如果有本地数据,直接返回数据
       resolve({ channels: JSON.parse(str) }) // 从缓存中得到的数据,下发到下一个Promise
     } else {
-      // 如果没有数据
+      // 如果没有数据,从线上拉取数据 然后保存到本地
       const data = await request({ url: '/user/channels' })
       localStorage.setItem(key, JSON.stringify(data.channels)) // 重新将线上数据写入缓存
-      resolve(data) // 将线上获取的数据 放给下个请求
+      resolve(data) // 将线上获取的数据 放给下个请求(返回)
     }
     // const { user } = store.state
     //   if (user.token) {

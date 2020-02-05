@@ -10,14 +10,14 @@ import store from '../store'
 
 import router from '@/router'
 
-const instance = axios.create({
+const instance = axios.create({ //  创建一个新的axios 实例
   baseURL: 'http://ttapi.research.itcast.cn/app/v1_0',
 
   // 转换原始数据格式
   transformResponse: [function (data) {
-    // Do whatever you want to transform the data
+    // Do whatever you want to transform the data5
     try {
-      return JSONBIGINT.parse(data)
+      return JSONBIGINT.parse(data) // 替换原来的JSON.parse
     } catch (e) {
       return data
     }
