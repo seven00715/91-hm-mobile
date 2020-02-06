@@ -92,7 +92,8 @@ instance.interceptors.response.use(function (response) {
   // 接口文档显示    401 用户未认证 此时是没有token或者是token失效
   if (error.response && error.response.status === 401) {
     // 保存本来要跳转的页面,方便登录后使用
-    let toPath = { path: '/login', query: { redirectUrl: router.currentRoute.path } }
+    // 将path 换成fullpath 防止丢失参数
+    let toPath = { path: '/login', query: { redirectUrl: router.currentRoute.fullPath } }
     // 开始补救措施,查看本地是否有refresh_token
     if (store.state.user.refresh_token) {
       // 使用try{}catch捕获错误

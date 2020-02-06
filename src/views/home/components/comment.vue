@@ -30,14 +30,21 @@
     </van-list>
     <!-- 底部输入框 -->
     <div class="reply-container van-hairline--top">
-      <van-field v-model="value" placeholder="写评论...">
+      <!--  给v-model一个修饰符trim 去除前后的空格  -->
+      <van-field v-model.trim="value" placeholder="写评论...">
         <van-loading v-if="submiting" slot="button" type="spinner" size="16px"></van-loading>
-        <span class="submit" v-else slot="button">提交</span>
+        <span class="submit" v-else slot="button" @click="addComment()">提交</span>
       </van-field>
     </div>
     <!-- 回复列表组件 -->
     <!-- 回复 -->
-    <van-action-sheet v-model="showReply" class="reply_dailog" title="回复评论" :round="false">
+    <van-action-sheet
+      v-model="showReply"
+      class="reply_dailog"
+      title="回复评论"
+      :round="false"
+      @close="close()"
+    >
       <!-- immediate-check="false" 是否主动加载数据   第一次不会主动调用load方法`-->
       <van-list
         v-model="reply.loading"
@@ -46,14 +53,12 @@
         :immediate-check="false"
         @load="getReply()"
       >
-        <div class="item van-hairline--bottom van-hairline--top" v-for="reply in reply.list" :key="reply.com_id.toString()">
-          <van-image
-            round
-            width="1rem"
-            height="1rem"
-            fit="fill"
-            :src="reply.aut_photo"
-          />
+        <div
+          class="item van-hairline--bottom van-hairline--top"
+          v-for="reply in reply.list"
+          :key="reply.com_id.toString()"
+        >
+          <van-image round width="1rem" height="1rem" fit="fill" :src="reply.aut_photo" />
           <div class="info">
             <p>
               <span class="name">{{ reply.aut_name }}</span>
@@ -70,7 +75,7 @@
 </template>
 
 <script>
-import { getCommentOrReplys } from '@/api/article' // 引入封装的获取评论方法
+import { getCommentOrReplys, addCommentOrReply } from '@/api/article' // 引入封装的获取评论方法
 export default {
   name: 'comment',
   data () {
@@ -139,6 +144,7 @@ export default {
       this.finished = data.last_id === data.end_id
       this.offset = data.last_id
     },
+    // 获取回复
     async openReply (commentId) {
       // 打开回复列表
       this.showReply = true
@@ -153,6 +159,11 @@ export default {
       this.reply.loading = true // 打开加载状态 因为这个时候没有了自动的检查
       // 开始加载第一页的数据
       this.getReply() // 第一次等前面数据清空之后,再手动调用数据
+    },
+    // 关闭回复
+    close () {
+      this.reply.commentId = null
+      this.$router.go(0)
     },
     // 获取评论的评论(回复/二级评论)
     async getReply () {
@@ -170,6 +181,46 @@ export default {
       this.reply.finished = data.last_id === data.end_id
       if (!this.reply.finished) {
         this.reply.offset = data.last_id
+      }
+    },
+    // 点击提交
+    async addComment () {
+      if (!this.value) return false // 当前评论内容为空立刻返回
+      // 提交评论的方法
+      this.submiting = true // 控制用户单位时间内评论的数据次数
+      await this.$sleep()// 强制等待500毫秒
+      try {
+        // 评论
+
+        // 怎么区分是对文章进行评论还是对评论进行评论
+        // 两种方式 通过showReply 判断
+        // 用过reply.commentId是否存在
+
+        const data = await addCommentOrReply({
+          content: this.value,
+          target: this.reply.commentId
+            ? this.reply.commentId
+            : this.$route.query.id, // 评论的目标的id
+          art_id: this.reply.commentId ? this.$route.query.id : null
+        })
+        console.log(data)
+
+        if (this.reply.commentId) {
+          this.reply.list.unshift(data.new_obj)
+
+          // 如果对评论进行回复 应该找到该评论,对该评论+1
+          const comment = this.comments.find(item => item.com_id.toString() === this.reply.commmtId)
+          // 找到了就是comment 没找到 comment 就是undefined
+          comment && comment.reply_count++
+        } else {
+          this.comments.unshift(data.new_obj)
+        }
+
+        this.submiting = false
+        this.value = ''
+      } catch (error) {
+        this.$notify({ type: 'danger', message: '评论失败' })
+        console.log(error)
       }
     }
   }

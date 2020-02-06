@@ -42,7 +42,8 @@ router.beforeEach((to, from, next) => {
   const toPath = {
     path: '/login',
     query: {
-      redirectUrl: to.path // 携带刚才要去的地址到登录页=>登录成功之后 ,有可权限再到刚才没有权限去的地址
+      redirectUrl: to.fullPath // 携带刚才要去的地址到登录页=>登录成功之后 ,有可权限再到刚才没有权限去的地址
+      // path 换成 fullpath 防止参数丢失
     }
   }
   // console.log(store.state.user.token)

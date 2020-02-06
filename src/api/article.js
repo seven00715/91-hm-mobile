@@ -123,3 +123,13 @@ export function getCommentOrReplys ({ type, source, offset, limit = 10 }) {
     params: { type, source, offset, limit }
   })
 }
+/**
+ *添加评论或者评论的回复
+ */
+export function addCommentOrReply (data) {
+  return request({
+    url: '/comments',
+    method: 'post',
+    data: { ...data }
+  })
+}
