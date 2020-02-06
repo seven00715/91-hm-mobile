@@ -45,11 +45,33 @@ export function unfollowings (data) {
 }
 
 /**
- * 获取用户自己的信息
+ * 获取用户自己的信息  文章 发表状态
  */
 
 export function getUserInfo () {
   return request({
     url: '/user'
+  })
+}
+
+/**
+ * 获取用户的个人资料
+ */
+
+export function getUserProfile () {
+  return request({
+    url: '/user/profile'
+  })
+}
+
+/**
+ * 编辑用户资料
+ */
+
+export function updateUserProfile (data) {
+  return request({
+    url: '/user/profile',
+    method: 'patch',
+    data
   })
 }
