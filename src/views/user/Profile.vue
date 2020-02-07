@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <van-nav-bar left-arrow @click-left="$router.back()" title="编辑资料" right-text="保存"></van-nav-bar>
+    <van-nav-bar left-arrow @click-left="$router.back()" title="编辑资料" right-text="保存" @click-right="saveInfo"></van-nav-bar>
     <van-cell-group>
       <van-cell is-link title="头像" center>
         <van-image
@@ -20,7 +20,7 @@
     <!-- 弹出组件 -->
     <van-popup v-model="showPhoto" style="width:80%" >
       <!-- 内容 -->
-      <van-cell>本地相册选择图片</van-cell>
+      <van-cell @click="openChangeFile">本地相册选择图片</van-cell>
       <van-cell>拍照</van-cell>
     </van-popup>
     <!-- 换昵称弹层 -->
@@ -49,12 +49,14 @@
 
       />
     </van-popup>
+    <!-- 当input:file 选择图片后就会触发onchange事件  vue中是@change-->
+    <input ref="myFile" type="file" name='' style="display:none" @change="upload" >
   </div>
 </template>
 
 <script>
 import dayjs from 'dayjs' // 引入时间插件
-import { getUserProfile } from '@/api/user'
+import { getUserProfile, saveUserinfo, updateUserImage } from '@/api/user'
 export default {
   name: 'user-profile',
   data () {
@@ -112,11 +114,35 @@ export default {
     async getUserProfile () {
       let data = await getUserProfile()
       this.user = data
+    },
+    // 保存信息
+    // 这里不用传 photo 我们通过别的方法修改了头像
+    // 需要 64位编码 不符合要求
+    async saveInfo () {
+      try {
+        await saveUserinfo({ ...this.user, photo: null })
+        this.$notify({ type: 'success', message: '保存信息成功' })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // 点击选择图片时触发
+    openChangeFile () {
+      // 上传本地文件
+      // 触发文件上传组件的方法
+      this.$refs.myFile.click() // 触发文件上传点击的方法
+    },
+    async upload () {
+      var from = new FormData()
+      from.append('photo', this.$refs.myFile.files[0])
+      let result = await updateUserImage(from)
+      result.photo = this.user.photo
     }
   },
   created () {
     this.getUserProfile()
   }
+
 }
 </script>
 

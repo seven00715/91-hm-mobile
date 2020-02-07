@@ -65,12 +65,24 @@ export function getUserProfile () {
 }
 
 /**
- * 编辑用户资料
+ * 编辑/保存用户资料
  */
 
-export function updateUserProfile (data) {
+export function saveUserinfo (data) {
   return request({
     url: '/user/profile',
+    method: 'patch',
+    data
+  })
+}
+
+/**
+ * 编辑用户头像资料的api
+ */
+
+export function updateUserImage (data) {
+  return request({
+    url: '/user/photo',
     method: 'patch',
     data
   })
