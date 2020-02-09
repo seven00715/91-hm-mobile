@@ -59,9 +59,10 @@ export default {
     this.getUserInfo()
   },
   methods: {
-    ...mapMutations(['clearUer']),
+    ...mapMutations(['clearUer', 'updateImg']),
     async getUserInfo () {
       this.userInfo = await getUserInfo()
+      this.updateImg(this.userInfo)
     },
     async logout () {
       try {

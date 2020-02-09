@@ -7,7 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 放置数据 ,直接将用户信息给我们的公共状态
-    user: auth.getUser() // 从缓存中读取的的
+    user: auth.getUser(), // 从缓存中读取的的
+    photo: ''
   },
   // state s数据修改必须通过mutations
   mutations: {
@@ -19,6 +20,10 @@ export default new Vuex.Store({
     clearUer (state) {
       state.user = {}
       auth.delUser() // 清空缓存中的数据
+    },
+    updateImg (state, payload) {
+      state.photo = payload.photo
+      localStorage.setItem('photo', JSON.stringify(payload.photo))
     }
   },
   actions: {

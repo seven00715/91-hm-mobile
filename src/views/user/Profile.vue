@@ -57,6 +57,7 @@
 <script>
 import dayjs from 'dayjs' // 引入时间插件
 import { getUserProfile, saveUserinfo, updateUserImage } from '@/api/user'
+import { mapMutations } from 'vuex'
 export default {
   name: 'user-profile',
   data () {
@@ -82,6 +83,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateImg']),
     btnName () {
       if (this.user.name.length < 1 || this.user.name.length > 7) {
         // 表示这个昵称不符合标准
@@ -137,7 +139,9 @@ export default {
       var from = new FormData()
       from.append('photo', this.$refs.myFile.files[0])
       let result = await updateUserImage(from)
-      result.photo = this.user.photo
+      this.user.photo = result.photo
+      this.showPhoto = false
+      this.updateImg(this.user)
     }
   },
   created () {
