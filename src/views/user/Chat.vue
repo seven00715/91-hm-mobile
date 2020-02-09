@@ -56,6 +56,7 @@ export default {
       this.scrollBottom()
     })
   },
+  // 页面销毁前关闭连接
   beforeDestroy () {
     this.socket.close()
   },
@@ -78,7 +79,7 @@ export default {
       this.$nextTick(() => {
         // 可以保证我们在10条的时候才滚动
         console.log(this.$refs)
-
+        // 将滚动条的位置滚动到最元素的低部
         this.$refs.list.scrollTop = this.$refs.list.scrollHeight
       })
     },

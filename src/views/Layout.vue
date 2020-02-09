@@ -8,8 +8,14 @@
       @click-right="$router.push('/search')"
       v-if="showNavBar"
     />
+    <!-- 二级路由容器 -->
     <div class="my-wrapper" :class="{noTop:!showNavBar}">
-      <router-view></router-view>
+      <!-- 如果想要缓存二级路由组件的话,可以直接缓存二级路由容器
+      如果缓存了这个容器,该容器下的所有组件都会缓存  -->
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+
     </div>
     <van-tabbar route>  <!-- 开启路由模式 -->
       <van-tabbar-item to="/" icon="home-o">首页</van-tabbar-item>

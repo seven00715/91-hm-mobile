@@ -1,6 +1,7 @@
 <template>
+<!-- 监听点击切换的事件 -->
   <div class="container">
-    <van-tabs v-model="activeIndex" swipeable>
+    <van-tabs v-model="activeIndex" swipeable @change="changeTab">
       <van-tab v-for="channel in channels" :title="channel.name" :key="channel.id">
         <!-- 列表内容 -->
         <!-- <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="refreshSuccessText">
@@ -40,6 +41,7 @@
   </div>
 </template>
 <script>
+
 import { getMychannels, delChannel, addChannel } from '@/api/channel'
 // import { getArticles } from '@/api/article'
 import ArticleList from './components/article-list'
@@ -72,6 +74,15 @@ export default {
     this.getMychannel()
   },
   methods: {
+    // 当切换tab页时,会触发
+    changeTab () {
+      // console.log('切换')
+      // 通知所有的article-list 实例 告诉他们 我切换页签了,把切换的页签传过去
+      // article-list组件需要 拿到传过去的页签 看看自己是否是在切换的页签
+      // 如果是自己所在的页签 就需要判断一下自己的组件是否有滚动 如果有滚动 就滚动到对应的位置
+      // 触发一个公共事件(changeTab) =>携带参数
+      evenBus.$emit('changeTab', this.channels[this.activeIndex].id)
+    },
     // 添加频道
     async addChannel (channel) {
       await addChannel(channel)
