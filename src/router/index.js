@@ -18,19 +18,32 @@ Vue.use(VueRouter)
 const routes = [{
   path: '/',
   component: Layout,
+
   children: [
-    { path: '/', name: 'home', component: Home }, // 二级路由
+    { path: '/',
+      name: 'home',
+      component: Home,
+      meta: {
+        isAlive: true
+      } }, // 二级路由
     { path: '/question', name: 'question', component: Qusetion },
     { path: '/video', name: 'video', component: Video },
     { path: '/user', name: 'user', component: User }
   ]
+
 },
 { path: '/user/profile', name: 'user-profile', component: UserProfile },
 { path: '/user/chat', name: 'user-chat', component: UserChat },
 { path: '/login', name: 'login', component: Login },
 { path: '/search', name: 'search', component: Search },
 { path: '/search/result', name: 'search-result', component: SearchResult },
-{ path: '/article', name: 'article', component: Article }
+{ path: '/article',
+  name: 'article',
+  component: Article,
+  meta: {
+    isAlive: true
+  }
+}
 
 ]
 
